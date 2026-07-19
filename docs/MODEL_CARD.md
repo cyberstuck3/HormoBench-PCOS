@@ -61,11 +61,11 @@ At the tuned threshold τ = 0.21:
 | Metric | Point | 95 % CI |
 |--------|:-----:|:-------:|
 | Recall (Sensitivity) | 0.963 | [0.867, 1.000] |
-| Specificity | 0.782 | [0.667, 0.882] |
-| Precision (PPV) | 0.684 | [0.526, 0.825] |
-| F1 | 0.800 | [0.667, 0.900] |
-| Balanced accuracy | 0.872 | [0.799, 0.932] |
-| Matthews CC | 0.702 | [0.554, 0.836] |
+| Specificity | 0.636 | [0.510, 0.764] |
+| Precision (PPV) | 0.565 | [0.419, 0.705] |
+| F1 | 0.712 | [0.580, 0.822] |
+| Balanced accuracy | 0.800 | [0.723, 0.871] |
+| Matthews CC | 0.568 | [0.419, 0.711] |
 
 **Baseline comparisons** (5-fold stratified CV, mean ± SD):
 

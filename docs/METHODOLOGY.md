@@ -31,6 +31,9 @@ All `GridSearchCV` operates on the training partition alone using
 
 Every threshold-related computation runs on validation predictions.
 The chosen threshold τ = 0.21 is applied unchanged on the test set.
+The precision constraint (≥ 0.65) is enforced only during threshold
+selection on the validation set; precision on the unseen test set may
+differ due to distributional shift between splits.
 Rerunning threshold optimisation on test predictions would be a
 textbook leakage error; the pipeline is structured so this is not
 even possible without editing code.
