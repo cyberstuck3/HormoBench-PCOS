@@ -182,6 +182,56 @@ Compared with typical hackathon PCOS AI submissions:
 
 ---
 
+## HormoBench Research Assistant
+
+An AI-powered subsystem that helps researchers interpret benchmark
+outputs.  It sits **on top** of the benchmark — it never modifies
+results, never retrains models, and never alters evaluation metrics.
+
+### Setup
+
+```bash
+# Install the OpenAI SDK (already in requirements.txt)
+pip install openai
+
+# Set your API key
+export OPENAI_API_KEY="sk-..."
+
+# Optionally override the model (default: gpt-4o)
+export HORMOBENCH_MODEL="gpt-4o"
+```
+
+### Generate AI Report
+
+```bash
+python scripts/generate_ai_report.py
+```
+
+Produces `docs/AI_REPORT.md` — a nine-section scientific interpretation
+covering model selection, threshold analysis, SHAP interpretation,
+calibration, clinical considerations, limitations, future work, and a
+responsible-AI statement.
+
+### Interactive Copilot
+
+```bash
+python scripts/copilot.py
+```
+
+Ask questions about the benchmark in plain English:
+
+```
+You > Why was Logistic Regression selected?
+You > What does the calibration analysis show?
+You > Explain the top SHAP features.
+You > quit
+```
+
+The copilot answers using benchmark evidence and explicitly says when
+evidence is unavailable.  It never fabricates metrics.
+
+---
+
 ## What This Is Not
 
 - Not a diagnostic tool

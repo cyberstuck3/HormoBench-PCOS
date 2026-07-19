@@ -17,3 +17,7 @@ joblib==1.5.3
 
 # Excel loader (source data is .xlsx)
 openpyxl==3.1.5
+
+# Research Assistant (optional — only needed for scripts/generate_ai_report.py
+# and scripts/copilot.py)
+openai>=1.0.0
