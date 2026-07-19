@@ -25,8 +25,10 @@ any researcher can extend in minutes.
 |--------|:--------------:|:-------:|
 | ROC-AUC | **0.951** | [0.878, 0.995] |
 | PR-AUC | **0.932** | [0.852, 0.989] |
+| Precision | **0.565** | [0.419, 0.705] |
 | Recall (Sensitivity) | **0.963** | [0.867, 1.000] |
-| F1 | **0.800** | [0.667, 0.900] |
+| Specificity | **0.636** | [0.510, 0.764] |
+| F1 | **0.712** | [0.580, 0.822] |
 
 **Explainability**: 14 of the top 15 SHAP-ranked features map to established
 [Rotterdam PCOS criteria](docs/evaluation_section.md).
@@ -60,7 +62,7 @@ flowchart LR
     A[Raw xlsx<br/>Kaggle Kerala cohort] --> B[Clean<br/>deterministic]
     B --> C[Split 70/15/15<br/>stratified · seed 42]
     C --> D[Train<br/>4 models · 5-fold CV]
-    D --> E[Validate<br/>threshold τ=0.26]
+    D --> E[Validate<br/>threshold τ=0.21]
     E --> F[Test<br/>single pass]
     F --> G[Rigor<br/>bootstrap · DeLong · Platt]
     G --> H[Explain<br/>SHAP · literature link]
@@ -79,7 +81,7 @@ flowchart TB
         T[fit preprocessor<br/>fit models via CV]
     end
     subgraph val ["VALIDATION (15%)"]
-        V[choose winner<br/>tune threshold τ=0.26<br/>fit Platt scaling]
+        V[choose winner<br/>tune threshold τ=0.21<br/>fit Platt scaling]
     end
     subgraph test ["TEST (15%) — sealed"]
         E[single-pass evaluation<br/>bootstrap 95% CI<br/>DeLong pairwise]
@@ -260,7 +262,7 @@ repository and the underlying dataset:
             for PCOS risk prediction},
   year   = {2026},
   note   = {Submitted to Hack-Nation 6th Global AI Hackathon, Challenge 05},
-  url    = {https://github.com/<user>/hormobench-pcos}
+  url    = {https://github.com/cyberstuck3/HormoBench-PCOS}
 }
 
 @misc{kottarathil_pcos_dataset,

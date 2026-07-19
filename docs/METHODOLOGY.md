@@ -30,7 +30,7 @@ All `GridSearchCV` operates on the training partition alone using
 ### 1.3 Threshold selection
 
 Every threshold-related computation runs on validation predictions.
-The chosen threshold τ = 0.26 is applied unchanged on the test set.
+The chosen threshold τ = 0.21 is applied unchanged on the test set.
 Rerunning threshold optimisation on test predictions would be a
 textbook leakage error; the pipeline is structured so this is not
 even possible without editing code.

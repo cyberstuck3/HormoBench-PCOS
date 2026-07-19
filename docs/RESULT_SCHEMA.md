@@ -45,7 +45,7 @@ Top-level JSON object:
 {
   "config": {
     "seed":         42,
-    "threshold":    0.26,
+    "threshold":    0.21,
     "n_bootstrap":  1000
   },
   "test_metrics": {
@@ -89,7 +89,7 @@ Top-level JSON object:
   },
   "confusion_matrices": {
     "default_0.5": { "fn": int, "fp": int },
-    "tuned_0.26":  { "fn": int, "fp": int }
+    "tuned_0.21":  { "fn": int, "fp": int }
   }
 }
 ```

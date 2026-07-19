@@ -13,7 +13,7 @@ positives cause disproportionate harm, the default is not neutral.
 ## Decision
 
 Select the decision threshold on the **validation set** by maximising
-recall subject to a precision floor of 0.65, yielding **τ = 0.26**.
+recall subject to a precision floor of 0.65, yielding **τ = 0.21**.
 The test set is not consulted during threshold selection.
 
 ## Rationale
@@ -28,8 +28,8 @@ The test set is not consulted during threshold selection.
   sensitivity for exactly this reason: the diagnostic pathway absorbs
   false positives cheaply, whereas false negatives leave disease
   undetected.
-- **Empirical impact**. Moving from τ = 0.50 to τ = 0.26 changes the
-  test-set confusion matrix from (9 FN, 2 FP) to (1 FN, 12 FP): an 89 %
+- **Empirical impact**. Moving from τ = 0.50 to τ = 0.21 changes the
+  test-set confusion matrix from (9 FN, 2 FP) to (1 FN, 20 FP): an 89 %
   reduction in missed cases at the cost of 10 additional referrals.
 
 ## Consequences

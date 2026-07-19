@@ -59,7 +59,7 @@ This discipline is the difference between a benchmark and a demo.
 ### 3. Clinical grounding of every technical decision
 
 The decision threshold is not the sklearn default of 0.5 — that is a
-mathematical convention, not a clinical decision. It is 0.26, selected
+mathematical convention, not a clinical decision. It is 0.21, selected
 on the validation set to prioritise sensitivity, because missed PCOS
 diagnoses carry documented harms (sub-fertility, endometrial hyperplasia,
 2–4× baseline type-2 diabetes risk) while false positives cost only a
