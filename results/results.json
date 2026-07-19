@@ -1,0 +1,44 @@
+{
+  "best_model": "Logistic Regression",
+  "best_params": {
+    "C": 0.01,
+    "penalty": "l2"
+  },
+  "all_models": {
+    "SVM (RBF)": {
+      "best_params": {
+        "C": 1,
+        "gamma": 0.001
+      },
+      "cv_auc_mean": 0.950360522875817,
+      "val_auc": 0.9454545454545454,
+      "val_f1": 0.7727272727272727
+    },
+    "Logistic Regression": {
+      "best_params": {
+        "C": 0.01,
+        "penalty": "l2"
+      },
+      "cv_auc_mean": 0.9536381699346406,
+      "val_auc": 0.9535353535353536,
+      "val_f1": 0.8
+    },
+    "KNN": {
+      "best_params": {
+        "n_neighbors": 15,
+        "weights": "distance"
+      },
+      "cv_auc_mean": 0.9304397385620915,
+      "val_auc": 0.909090909090909,
+      "val_f1": 0.7272727272727273
+    },
+    "Naive Bayes": {
+      "best_params": {
+        "var_smoothing": 1e-09
+      },
+      "cv_auc_mean": 0.9078159477124184,
+      "val_auc": 0.8828282828282829,
+      "val_f1": 0.746268656716418
+    }
+  }
+}

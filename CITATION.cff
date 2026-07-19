@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use HormoBench-PCOS in academic work, please cite it as below."
+title: "HormoBench-PCOS: An open, reproducible, explainable benchmark for PCOS risk prediction"
+version: "0.1.0"
+date-released: "2026-07-19"
+license: MIT
+type: software
+repository-code: "https://github.com/<user>/hormobench-pcos"
+abstract: >-
+  HormoBench-PCOS is an open-source benchmark for polycystic ovary syndrome
+  risk prediction from tabular clinical records. It publishes a cleaned
+  dataset, a fixed 70/15/15 stratified split, a rigorously evaluated
+  Logistic Regression reference model with L2 regularization, and a
+  reproducible evaluation pipeline covering bootstrap 95% confidence
+  intervals, DeLong pairwise ROC-AUC comparisons, conditional Platt
+  calibration, and SHAP feature attributions linked to established
+  PCOS literature. Submitted to the Hack-Nation 6th Global AI Hackathon,
+  Challenge 05 - Foundation Models for Women's Hormonal Health.
+keywords:
+  - "polycystic ovary syndrome"
+  - "PCOS"
+  - "women's health"
+  - "medical AI"
+  - "benchmark"
+  - "explainable AI"
+  - "SHAP"
+  - "calibration"
+  - "reproducibility"
+  - "hackathon"
+references:
+  - type: dataset
+    authors:
+      - family-names: "Kottarathil"
+        given-names: "Prasoon"
+    title: "Polycystic Ovary Syndrome (PCOS)"
+    year: 2019
+    url: "https://www.kaggle.com/datasets/prasoonkottarathil/polycystic-ovary-syndrome-pcos"
+    license: "CC-BY-NC-SA-4.0"

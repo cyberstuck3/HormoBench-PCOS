@@ -1,0 +1,19 @@
+# HormoBench-PCOS — pinned dependencies
+# Tested with Python 3.12 on Ubuntu 24.04.
+# For strict reproducibility use a virtual environment: python -m venv .venv && source .venv/bin/activate
+
+# Core scientific stack
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+scikit-learn==1.8.0
+matplotlib==3.10.8
+
+# Explainability
+shap==0.52.0
+
+# Serialization
+joblib==1.5.3
+
+# Excel loader (source data is .xlsx)
+openpyxl==3.1.5
