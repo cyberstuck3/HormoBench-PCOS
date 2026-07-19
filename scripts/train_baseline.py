@@ -23,37 +23,15 @@ from sklearn.model_selection import (
 from sklearn.pipeline        import Pipeline
 from sklearn.preprocessing   import StandardScaler
 from sklearn.impute          import SimpleImputer
-from sklearn.linear_model    import LogisticRegression
-from sklearn.svm             import SVC
-from sklearn.neighbors       import KNeighborsClassifier
-from sklearn.naive_bayes     import GaussianNB
-from sklearn.metrics         import roc_auc_score, f1_score, classification_report
+from sklearn.metrics         import roc_auc_score, f1_score
 
 from hormobench import (
     CLEAN_CSV, SPLITS_JSON, BASELINE_JSON,
     MODEL_JOBLIB, PREPROC_JOBLIB, SEED,
 )
+from hormobench.registry import MODEL_REGISTRY
 
 TARGET = "PCOS (Y/N)"
-
-MODEL_GRIDS = {
-    "SVM (RBF)": {
-        "model":  SVC(kernel="rbf", probability=True, random_state=SEED),
-        "params": {"C": [0.1, 1, 10, 100], "gamma": ["scale", "auto", 0.01, 0.001]},
-    },
-    "Logistic Regression": {
-        "model":  LogisticRegression(max_iter=1000, random_state=SEED),
-        "params": {"C": [0.01, 0.1, 1, 10], "penalty": ["l2"]},
-    },
-    "KNN": {
-        "model":  KNeighborsClassifier(),
-        "params": {"n_neighbors": [3, 5, 7, 11, 15], "weights": ["uniform", "distance"]},
-    },
-    "Naive Bayes": {
-        "model":  GaussianNB(),
-        "params": {"var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6]},
-    },
-}
 
 
 def main():
@@ -100,8 +78,9 @@ def main():
     print("=" * 60)
 
     results, best_models = {}, {}
-    for name, cfg in MODEL_GRIDS.items():
-        gs = GridSearchCV(cfg["model"], cfg["params"],
+    for name, entry in MODEL_REGISTRY.items():
+        model = entry["cls"](**entry["base_kw"])
+        gs = GridSearchCV(model, entry["param_grid"],
                           cv=cv, scoring="roc_auc", n_jobs=-1, refit=True)
         gs.fit(X_train_pp, y_train)
         y_val_prob = gs.best_estimator_.predict_proba(X_val_pp)[:, 1]
