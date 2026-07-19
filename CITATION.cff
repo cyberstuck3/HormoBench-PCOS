@@ -5,7 +5,7 @@ version: "0.1.0"
 date-released: "2026-07-19"
 license: MIT
 type: software
-repository-code: "https://github.com/<user>/hormobench-pcos"
+repository-code: "https://github.com/cyberstuck3/HormoBench-PCOS"
 abstract: >-
   HormoBench-PCOS is an open-source benchmark for polycystic ovary syndrome
   risk prediction from tabular clinical records. It publishes a cleaned

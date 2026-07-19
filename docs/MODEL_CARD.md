@@ -9,7 +9,7 @@
 - **Hyperparameters**: C = 0.01, penalty = L2, max_iter = 1000, seed = 42
 - **Preprocessing**: median imputation + standard scaling, fit on train only
 - **Calibration**: Platt (sigmoid) scaling, fit on validation-set predictions
-- **Decision threshold**: τ = 0.26 (selected on validation, applied to test)
+- **Decision threshold**: τ = 0.21 (selected on validation, applied to test)
 - **Framework**: scikit-learn 1.8.0
 - **Training runtime**: <5 seconds on a single CPU core
 - **File**: `results/models/best_model.joblib` (unfrozen);
@@ -56,7 +56,7 @@ Threshold-independent:
 | Brier score (raw) | 0.095 | [0.069, 0.126] |
 | Brier score (Platt) | 0.076 | — |
 
-At the tuned threshold τ = 0.26:
+At the tuned threshold τ = 0.21:
 
 | Metric | Point | 95 % CI |
 |--------|:-----:|:-------:|

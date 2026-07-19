@@ -39,7 +39,7 @@ dataset (Prasoon Kottarathil, 10-hospital Kerala cohort). See
 |-----------|:-----:|-----------|
 | `SEED` | 42 | Standard reproducibility seed |
 | `SPLIT` | 70 / 15 / 15 stratified | Defensible on n = 541; see [ADR-005](adr/) |
-| `DECISION_THRESHOLD` | 0.26 | Selected on val to maximise recall s.t. precision ≥ 0.65 |
+| `DECISION_THRESHOLD` | 0.21 | Selected on val to maximise recall s.t. precision ≥ 0.65 |
 | `N_BOOTSTRAP` | 1000 | Standard for 95% CI stability |
 | `CV_FOLDS` | 5 | Stratified k-fold on training set |
 | `ECE_THRESHOLD_FOR_PLATT` | 0.05 | Apply Platt scaling only if raw ECE exceeds this |
