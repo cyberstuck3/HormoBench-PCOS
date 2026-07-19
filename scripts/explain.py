@@ -1,9 +1,10 @@
 """
 Stage 3 — SHAP global + local explainability + literature validation table.
 
-Uses LinearExplainer (exact and fast for the LR winner). Waterfall plots for
-one confident TP and one confident TN. Writes a CSV of feature importance
-consumed downstream by rigor/reports.
+The SHAP explainer is dispatched automatically based on the winning model type:
+  Linear models  → shap.LinearExplainer  (exact)
+  Tree models    → shap.TreeExplainer    (exact)
+  Everything else → shap.KernelExplainer  (model-agnostic)
 """
 import sys
 import json
@@ -23,9 +24,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from hormobench import (
-    CLEAN_CSV, SPLITS_JSON, MODEL_JOBLIB, PREPROC_JOBLIB,
-    RESULTS_FIG, SHAP_CSV, DECISION_THRESHOLD,
+    CLEAN_CSV, SPLITS_JSON, BASELINE_JSON,
+    MODEL_JOBLIB, PREPROC_JOBLIB,
+    RESULTS_FIG, SHAP_CSV, load_decision_threshold,
 )
+from hormobench.registry import get_shap_explainer
 
 TARGET = "PCOS (Y/N)"
 
@@ -33,8 +36,13 @@ TARGET = "PCOS (Y/N)"
 def main():
     df       = pd.read_csv(CLEAN_CSV)
     splits   = json.load(open(SPLITS_JSON))
+    prior    = json.load(open(BASELINE_JSON))
     model    = joblib.load(MODEL_JOBLIB)
     prep     = joblib.load(PREPROC_JOBLIB)
+    threshold = load_decision_threshold()
+
+    best_name = prior["best_model"]
+    print(f"Explaining winner: {best_name}  (threshold τ={threshold})")
 
     X, y = df.drop(columns=[TARGET]), df[TARGET]
     feature_names = X.columns.tolist()
@@ -43,8 +51,8 @@ def main():
     X_test_pp  = prep.transform(X.loc[splits["test_idx"]])
     y_test     = y.loc[splits["test_idx"]].values
 
-    # ---- SHAP LinearExplainer (exact for LR) ----
-    explainer = shap.LinearExplainer(model, X_train_pp, feature_names=feature_names)
+    # ---- SHAP explainer dispatched by model type ----
+    explainer   = get_shap_explainer(model, X_train_pp, feature_names=feature_names)
     shap_values = explainer(X_test_pp)
 
     importance_df = (
@@ -73,7 +81,7 @@ def main():
 
     # ---- Waterfall: one confident TP and one confident TN ----
     y_prob = model.predict_proba(X_test_pp)[:, 1]
-    y_pred = (y_prob >= DECISION_THRESHOLD).astype(int)
+    y_pred = (y_prob >= threshold).astype(int)
     tp_idx = np.where((y_pred == 1) & (y_test == 1))[0]
     tn_idx = np.where((y_pred == 0) & (y_test == 0))[0]
     tp_pick = tp_idx[np.argmax(y_prob[tp_idx])]

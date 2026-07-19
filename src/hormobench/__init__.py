@@ -35,5 +35,21 @@ PREPROC_JOBLIB  = RESULTS_MOD / "preprocessor.joblib"
 
 # Reproducibility constants
 SEED               = 42
-DECISION_THRESHOLD = 0.26   # tuned on validation set
 N_BOOTSTRAP        = 1000
+
+# DECISION_THRESHOLD is NOT hardcoded here.  It is derived by Stage 5
+# (scripts/optimize_threshold.py) from validation-set predictions and
+# persisted into results/results.json.  Downstream scripts must always
+# load it from there via load_decision_threshold().
+
+
+def load_decision_threshold() -> float:
+    """Load the decision threshold persisted by Stage 5.
+
+    Falls back to 0.50 (sklearn default) if the key is missing — which
+    means Stage 5 has not run yet.
+    """
+    import json
+    with open(BASELINE_JSON) as f:
+        data = json.load(f)
+    return float(data.get("decision_threshold", 0.50))

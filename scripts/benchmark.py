@@ -8,15 +8,16 @@ Usage
 
 Stages
 ------
-    1. clean_data       → data/processed/pcos_clean.csv
-    2. train_baseline   → data/splits/splits.json, results/models/*, results/results.json
-    3. explain          → results/figures/shap_*.png, results/shap_importance.csv
-    4. run_rigor        → results/{figures,tables,narratives}/*, docs/evaluation_section.md,
-                          results/rigor_all_results.json
+    1. clean_data          → data/processed/pcos_clean.csv
+    2. train_baseline      → data/splits/splits.json, results/models/*, results/results.json
+    5. optimize_threshold  → results/results.json (decision_threshold field added)
+    3. explain             → results/figures/shap_*.png, results/shap_importance.csv
+    4. run_rigor           → results/{figures,tables,narratives}/*, docs/evaluation_section.md,
+                             results/rigor_all_results.json
 
 Exit codes
 ----------
-    0  All four stages succeeded.
+    0  All stages succeeded.
     1  A stage failed (details in stderr and the traceback printed above).
 """
 import sys
@@ -38,10 +39,11 @@ def _load_stage(name: str, path: Path):
 def main():
     scripts_dir = Path(__file__).resolve().parent
     stages = [
-        ("Stage 1 — Clean data",            scripts_dir / "clean_data.py"),
-        ("Stage 2 — Train baseline models", scripts_dir / "train_baseline.py"),
-        ("Stage 3 — SHAP explainability",   scripts_dir / "explain.py"),
-        ("Stage 4 — Scientific rigor",      scripts_dir / "run_rigor.py"),
+        ("Stage 1 — Clean data",              scripts_dir / "clean_data.py"),
+        ("Stage 2 — Train baseline models",    scripts_dir / "train_baseline.py"),
+        ("Stage 5 — Optimise threshold",       scripts_dir / "optimize_threshold.py"),
+        ("Stage 3 — SHAP explainability",      scripts_dir / "explain.py"),
+        ("Stage 4 — Scientific rigor",         scripts_dir / "run_rigor.py"),
     ]
 
     print("=" * 72)
@@ -64,7 +66,7 @@ def main():
 
     total = time.time() - t0
     print(f"\n{'=' * 72}")
-    print(f"✓ All four stages completed in {total:.1f}s")
+    print(f"✓ All stages completed in {total:.1f}s")
     print(f"{'=' * 72}")
     print("\nSee:")
     print("  results/rigor_all_results.json  — machine-readable metrics")

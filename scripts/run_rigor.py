@@ -14,17 +14,14 @@ warnings.filterwarnings("ignore")
 
 import pandas as pd
 import joblib
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm          import SVC
-from sklearn.neighbors    import KNeighborsClassifier
-from sklearn.naive_bayes  import GaussianNB
-from sklearn.metrics      import confusion_matrix
+from sklearn.metrics import confusion_matrix
 
 from hormobench import (
     CLEAN_CSV, SPLITS_JSON, BASELINE_JSON, RIGOR_JSON, SHAP_CSV,
     MODEL_JOBLIB, PREPROC_JOBLIB, RESULTS, RESULTS_FIG, RESULTS_TAB,
-    RESULTS_NAR, DOCS, SEED, DECISION_THRESHOLD, N_BOOTSTRAP,
+    RESULTS_NAR, DOCS, SEED, N_BOOTSTRAP, load_decision_threshold,
 )
+from hormobench.registry import MODEL_REGISTRY, build_model
 from hormobench.rigor.metrics     import compute_all_metrics
 from hormobench.rigor.delong      import delong_pairwise
 from hormobench.rigor.calibration import (
@@ -39,15 +36,7 @@ from hormobench.rigor.reports     import (
 )
 from hormobench.rigor.clinical    import threshold_justification, shap_interpretation_md
 
-TARGET     = "PCOS (Y/N)"
-BEST_NAME  = "Logistic Regression"
-
-MODEL_SPECS = {
-    "Logistic Regression": (LogisticRegression, dict(max_iter=1000, random_state=SEED)),
-    "SVM (RBF)":           (SVC, dict(kernel="rbf", probability=True, random_state=SEED)),
-    "KNN":                 (KNeighborsClassifier, {}),
-    "Naive Bayes":         (GaussianNB, {}),
-}
+TARGET = "PCOS (Y/N)"
 
 
 def main():
@@ -60,6 +49,11 @@ def main():
     best_params = {n: r["best_params"] for n, r in prior["all_models"].items()}
     prep    = joblib.load(PREPROC_JOBLIB)
 
+    # ── Dynamic winner from Stage 2 (C2) ──
+    best_name = prior["best_model"]
+    # ── Load persisted threshold from Stage 5 (C1) ──
+    threshold = load_decision_threshold()
+
     X, y = df.drop(columns=[TARGET]), df[TARGET]
     X_tr, y_tr = X.loc[splits["train_idx"]], y.loc[splits["train_idx"]]
     X_va, y_va = X.loc[splits["val_idx"]],   y.loc[splits["val_idx"]]
@@ -67,36 +61,39 @@ def main():
 
     X_tr_pp, X_va_pp, X_te_pp = prep.transform(X_tr), prep.transform(X_va), prep.transform(X_te)
 
-    # ---- Reconstruct + fit all four models ----
+    # ── Reconstruct + fit all models from shared registry (C3) ──
     models, test_probs = {}, {}
-    for name, (cls, base_kw) in MODEL_SPECS.items():
-        mdl = cls(**{**base_kw, **best_params[name]})
+    for name in MODEL_REGISTRY:
+        if name not in best_params:
+            continue  # skip models not in this run's results
+        mdl = build_model(name, best_params[name])
         mdl.fit(X_tr_pp, y_tr)
         models[name]     = mdl
         test_probs[name] = mdl.predict_proba(X_te_pp)[:, 1]
 
-    best_model, y_prob = models[BEST_NAME], test_probs[BEST_NAME]
+    best_model = models[best_name]
+    y_prob     = test_probs[best_name]
 
-    # ---- (1) Bootstrap CIs on the test set ----
+    # ── (1) Bootstrap CIs on the test set ──
     print("Computing bootstrap 95% CIs (n=1000) on test set...")
     test_metrics = compute_all_metrics(
-        y_te.values, y_prob, threshold=DECISION_THRESHOLD,
+        y_te.values, y_prob, threshold=threshold,
         n_iter=N_BOOTSTRAP, seed=SEED,
     )
 
-    # ---- (2) 5-fold stratified CV comparison ----
+    # ── (2) 5-fold stratified CV comparison ──
     print("Running 5-fold stratified CV comparison...")
     cv_models = {
-        n: MODEL_SPECS[n][0](**{**MODEL_SPECS[n][1], **best_params[n]})
+        n: build_model(n, best_params[n])
         for n in models
     }
     cv_df = cv_compare_models(cv_models, X_tr, y_tr, seed=SEED)
 
-    # ---- (3) DeLong pairwise ----
+    # ── (3) DeLong pairwise ──
     print("Computing DeLong pairwise ROC-AUC tests...")
     delong_pw, delong_aucs = delong_pairwise(y_te.values, test_probs)
 
-    # ---- (4) Calibration + conditional Platt scaling ----
+    # ── (4) Calibration + conditional Platt scaling ──
     print("Analyzing calibration...")
     cal_raw   = calibration_analysis(y_te.values, y_prob)
     cal_after, y_prob_cal, platt = None, None, False
@@ -108,16 +105,16 @@ def main():
     else:
         print(f"  ECE={cal_raw['ece']:.4f} ≤ {ECE_THRESHOLD_FOR_PLATT} → raw calibration adequate.")
 
-    # ---- (5) Clinical narratives ----
+    # ── (5) Clinical narratives ──
     _, fp_d, fn_d, _ = confusion_matrix(y_te, (y_prob >= 0.50).astype(int)).ravel()
-    _, fp_t, fn_t, _ = confusion_matrix(y_te, (y_prob >= DECISION_THRESHOLD).astype(int)).ravel()
-    threshold_md = threshold_justification(DECISION_THRESHOLD, fn_d, fp_d, fn_t, fp_t)
+    _, fp_t, fn_t, _ = confusion_matrix(y_te, (y_prob >= threshold).astype(int)).ravel()
+    threshold_md = threshold_justification(threshold, fn_d, fp_d, fn_t, fp_t)
 
     shap_imp = pd.read_csv(SHAP_CSV)
     top15 = list(zip(shap_imp["feature"].head(15), shap_imp["mean_abs_shap"].head(15)))
     shap_md = shap_interpretation_md(top15)
 
-    # ---- Figures ----
+    # ── Figures ──
     print("Rendering figures...")
     plot_calibration(
         y_te.values, y_prob, y_prob_cal=(y_prob_cal if platt else None),
@@ -129,11 +126,11 @@ def main():
     plot_roc_multi(y_te.values, test_probs, out_path=RESULTS_FIG / "roc_curves.png")
     plot_cv_comparison(cv_df,               out_path=RESULTS_FIG / "cv_boxplots.png")
 
-    # ---- Tables + narratives ----
+    # ── Tables + narratives ──
     print("Writing markdown tables and narratives...")
     mtable = metrics_table_md(
         test_metrics,
-        title=f"Held-Out Test Set Performance — {BEST_NAME} at τ={DECISION_THRESHOLD} "
+        title=f"Held-Out Test Set Performance — {best_name} at τ={threshold} "
               f"(95% CI, {N_BOOTSTRAP} bootstrap iterations)",
     )
     ctable = cv_table_md(cv_df)
@@ -147,12 +144,14 @@ def main():
     (RESULTS_NAR / "threshold_justification.md").write_text(threshold_md)
     (RESULTS_NAR / "shap_interpretation.md").write_text(shap_md)
 
-    # ---- Consolidated paper-style section ----
+    # ── Consolidated paper-style section ──
+    winner_params = best_params[best_name]
+    params_str = ", ".join(f"{k}={v}" for k, v in winner_params.items())
     paper = f"""# HormoBench-PCOS — Evaluation
 
 *Reproducible one-command benchmark. All numbers below were regenerated by
 `python scripts/benchmark.py` with seed = {SEED}, decision threshold
-τ = {DECISION_THRESHOLD} (selected on validation set), and {N_BOOTSTRAP} bootstrap iterations.*
+τ = {threshold} (selected on validation set), and {N_BOOTSTRAP} bootstrap iterations.*
 
 ## 1. Model Selection
 
@@ -163,9 +162,8 @@ Gaussian Naive Bayes — were tuned via 5-fold stratified cross-validation
 
 {ctable}
 
-Logistic Regression with L2 regularisation (C = {best_params['Logistic Regression']['C']})
-was selected for validation-set ROC-AUC, smallest overfitting gap, native
-SHAP-linear explainability, and lowest computational cost.
+{best_name} ({params_str}) was selected as the reference model based on
+validation-set ROC-AUC and Occam's-razor considerations.
 
 ## 2. DeLong Pairwise Comparison
 
@@ -199,24 +197,24 @@ Test set: n = {len(y_te)}, {int(y_te.sum())} PCOS positives. Evaluated once.
 """
     (DOCS / "evaluation_section.md").write_text(paper)
 
-    # ---- Machine-readable dump ----
+    # ── Machine-readable dump ──
     RIGOR_JSON.write_text(json.dumps({
-        "config":       {"seed": SEED, "threshold": DECISION_THRESHOLD, "n_bootstrap": N_BOOTSTRAP},
+        "config":       {"seed": SEED, "threshold": threshold, "n_bootstrap": N_BOOTSTRAP},
         "test_metrics": test_metrics,
         "cv_results":   cv_df.to_dict(orient="records"),
         "delong":       {"aucs": delong_aucs, "pairwise": delong_pw},
         "calibration":  {"raw": cal_raw, "platt_applied": platt, "after_platt": cal_after},
         "confusion_matrices": {
-            "default_0.5":                      {"fn": int(fn_d), "fp": int(fp_d)},
-            f"tuned_{DECISION_THRESHOLD}":      {"fn": int(fn_t), "fp": int(fp_t)},
+            "default_0.5":                  {"fn": int(fn_d), "fp": int(fp_d)},
+            f"tuned_{threshold}":           {"fn": int(fn_t), "fp": int(fp_t)},
         },
     }, indent=2, default=str))
 
-    # ---- Console summary ----
+    # ── Console summary ──
     print("\n" + "=" * 72)
     print("HormoBench-PCOS — Scientific Rigor Summary")
     print("=" * 72)
-    print(f"Winner: {BEST_NAME} | τ={DECISION_THRESHOLD} | bootstrap n={N_BOOTSTRAP}")
+    print(f"Winner: {best_name} | τ={threshold} | bootstrap n={N_BOOTSTRAP}")
     print("\nTest set metrics (point [95% CI]):")
     for k in ["roc_auc","pr_auc","brier","recall","specificity","precision","f1","balanced_accuracy","mcc"]:
         m = test_metrics[k]
