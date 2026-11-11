@@ -14,6 +14,8 @@ Stages
     3. explain             → results/figures/shap_*.png, results/shap_importance.csv
     4. run_rigor           → results/{figures,tables,narratives}/*, docs/evaluation_section.md,
                              results/rigor_all_results.json
+    M1. clean_metabolomics → data/processed/pcos_metabolomics_clean.csv
+    M2. train_metabolomics → data/splits/metabolomics_splits.json, results/metabolomics/*
 
 Exit codes
 ----------
@@ -44,6 +46,8 @@ def main():
         ("Stage 5 — Optimise threshold",       scripts_dir / "optimize_threshold.py"),
         ("Stage 3 — SHAP explainability",      scripts_dir / "explain.py"),
         ("Stage 4 — Scientific rigor",         scripts_dir / "run_rigor.py"),
+        ("Metabolomics — Clean data",          scripts_dir / "clean_metabolomics.py"),
+        ("Metabolomics — Train & evaluate",    scripts_dir / "train_metabolomics.py"),
     ]
 
     print("=" * 72)

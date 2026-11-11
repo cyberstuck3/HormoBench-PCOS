@@ -117,6 +117,44 @@ If you use this benchmark you must cite the original data uploader:
 > Kottarathil, P. Polycystic Ovary Syndrome (PCOS) [Data set]. Kaggle.
 > https://www.kaggle.com/datasets/prasoonkottarathil/polycystic-ovary-syndrome-pcos
 
+## Second Cohort: Follicular-Fluid Amino-Acid Metabolomics Track
+
+A separate, smaller cohort is benchmarked as its own track. It is **not**
+merged with the Kerala data: the two share only Age, Height, Weight and BMI.
+
+| Item | Value |
+|---|---|
+| Raw files | `data/raw/metabolomics/Table-S1.xlsx` (clinical), `Table-S2.xlsx` (amino acids) |
+| Clean file | `data/processed/pcos_metabolomics_clean.csv` |
+| Size | 72 participants: 37 controls, 35 PCOS (48.6 %) |
+| Features | Age, Height (m), Weight (kg), BMI, serum testosterone (ng/ml), 17 follicular-fluid amino acids (LC-MS peak areas) |
+| Split | 80/20 stratified, seed 42 → `data/splits/metabolomics_splits.json` (57 train / 15 test) |
+| Scripts | `scripts/clean_metabolomics.py`, `scripts/train_metabolomics.py` |
+| Results | `results/metabolomics/results.json`, `results/metabolomics/test_metrics.md` |
+
+**Removed during cleaning**
+
+- *Estrous cyclicity* and *Ovarian morphology*: Rotterdam diagnostic criteria
+  that separate the two groups perfectly (every control is Regular/Normal,
+  every PCOS case is irregular/polycystic). Keeping them leaks the label.
+- *L-Glycine*, *L-Alanine*, *L-Cysteine*: marked "/" (not measured) for every participant.
+
+**Caveats**
+
+- With 15 test participants, test-set CIs span roughly ±0.25 AUC. Treat the
+  5-fold CV AUC on the training set as the more stable signal.
+- Serum testosterone reflects biochemical hyperandrogenism, which is also a
+  Rotterdam criterion; the `amino_acids` feature set excludes it.
+- Amino-acid values are raw instrument peak areas, not absolute concentrations.
+- Amino acids come from an untargeted metabolomic survey of **follicular
+  fluid** (collected during IVF/oocyte retrieval), not blood. A model built
+  on them is not a screening tool for the general population.
+
+**Source and licence**: CC BY 4.0. Cite as:
+
+> Yuan, Y. (2023). *DataSet for PCOS* (Version 1) [Data set]. Mendeley Data.
+> https://doi.org/10.17632/mh94mxn3nh.1
+
 ## Related Documents
 
 - [`MODEL_CARD.md`](MODEL_CARD.md) — the model trained on this dataset
