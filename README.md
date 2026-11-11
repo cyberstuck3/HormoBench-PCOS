@@ -62,15 +62,21 @@ challenge it without rebuilding the foundations.
 ## Pipeline at a Glance
 
 ```mermaid
-flowchart LR
-    A[Raw xlsx<br/>Kaggle Kerala cohort] --> B[Clean<br/>deterministic]
-    B --> C[Split 70/15/15<br/>stratified · seed 42]
-    C --> D[Train<br/>4 models · 5-fold CV]
-    D --> E[Validate<br/>threshold τ=0.21]
-    E --> F[Test<br/>single pass]
-    F --> G[Rigor<br/>bootstrap · DeLong · Platt]
-    G --> H[Explain<br/>SHAP · literature link]
-    H --> I[Publish<br/>tables · figures · paper]
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
+flowchart TB
+    subgraph prep ["1. Prepare"]
+        direction LR
+        A["Raw xlsx<br/>Kerala cohort"] --> B["Clean<br/>deterministic"] --> C["Split 70/15/15<br/>stratified, seed 42"]
+    end
+    subgraph model ["2. Model"]
+        direction LR
+        D["Train<br/>4 models, 5-fold CV"] --> E["Validate<br/>threshold 0.21"] --> F["Test<br/>single pass"]
+    end
+    subgraph report ["3. Report"]
+        direction LR
+        G["Rigor<br/>bootstrap, DeLong, Platt"] --> H["Explain<br/>SHAP, literature"] --> I["Publish<br/>tables, figures"]
+    end
+    prep --> model --> report
 ```
 
 Full stage specification: [`docs/BENCHMARK_SPEC.md`](docs/BENCHMARK_SPEC.md).
@@ -80,18 +86,19 @@ Full stage specification: [`docs/BENCHMARK_SPEC.md`](docs/BENCHMARK_SPEC.md).
 ## Anti-Leakage Data Flow
 
 ```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
 flowchart TB
-    subgraph train ["TRAIN (70%)"]
-        T[fit preprocessor<br/>fit models via CV]
+    subgraph train ["TRAIN 70%"]
+        T["fit preprocessor<br/>fit models via CV"]
     end
-    subgraph val ["VALIDATION (15%)"]
-        V[choose winner<br/>tune threshold τ=0.21<br/>fit Platt scaling]
+    subgraph val ["VALIDATION 15%"]
+        V["choose winner<br/>tune threshold 0.21<br/>fit Platt scaling"]
     end
-    subgraph test ["TEST (15%) — sealed"]
-        E[single-pass evaluation<br/>bootstrap 95% CI<br/>DeLong pairwise]
+    subgraph test ["TEST 15%, sealed"]
+        E["single-pass evaluation<br/>bootstrap 95% CI<br/>DeLong pairwise"]
     end
-    T -->|transform only| V
-    V -->|transform only| E
+    train -- "transform only" --> val
+    val -- "transform only" --> test
 ```
 
 Six anti-leakage invariants documented in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) § 1.
