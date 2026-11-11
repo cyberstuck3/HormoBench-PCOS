@@ -1,0 +1,361 @@
+{
+  "n_total": 72,
+  "n_train": 57,
+  "n_test": 15,
+  "threshold": 0.5,
+  "feature_sets": {
+    "clinical": {
+      "features": [
+        "Age",
+        "Height (m)",
+        "Weight (kg)",
+        "BMI",
+        "Serum testosterone (ng/ml)"
+      ],
+      "best_model": "Logistic Regression",
+      "cv": {
+        "Logistic Regression": {
+          "cv_auc_mean": 0.7044444444444444,
+          "cv_auc_std": 0.12694900307885862,
+          "best_params": {
+            "C": 1,
+            "penalty": "l2"
+          }
+        },
+        "SVM (RBF)": {
+          "cv_auc_mean": 0.6877777777777778,
+          "cv_auc_std": 0.13932819412815323,
+          "best_params": {
+            "C": 10,
+            "gamma": 0.001
+          }
+        },
+        "KNN": {
+          "cv_auc_mean": 0.6627777777777778,
+          "cv_auc_std": 0.0914154807647851,
+          "best_params": {
+            "n_neighbors": 7,
+            "weights": "uniform"
+          }
+        },
+        "Naive Bayes": {
+          "cv_auc_mean": 0.67,
+          "cv_auc_std": 0.1391153708967959,
+          "best_params": {
+            "var_smoothing": 1e-09
+          }
+        }
+      },
+      "test": {
+        "roc_auc": {
+          "point": 0.7857142857142857,
+          "lo": 0.49950000000000006,
+          "hi": 1.0,
+          "std": 0.1339496790278382,
+          "n_valid": 1000
+        },
+        "pr_auc": {
+          "point": 0.8453213453213453,
+          "lo": 0.5306406093906094,
+          "hi": 1.0,
+          "std": 0.11773561433113477,
+          "n_valid": 1000
+        },
+        "brier": {
+          "point": 0.2007406013362297,
+          "lo": 0.13784786778582198,
+          "hi": 0.27038359829790365,
+          "std": 0.034996308124529314,
+          "n_valid": 1000
+        },
+        "precision": {
+          "point": 1.0,
+          "lo": 1.0,
+          "hi": 1.0,
+          "std": 0.10888526071052962,
+          "n_valid": 1000
+        },
+        "recall": {
+          "point": 0.5714285714285714,
+          "lo": 0.16666666666666666,
+          "hi": 1.0,
+          "std": 0.1995901120550665,
+          "n_valid": 1000
+        },
+        "specificity": {
+          "point": 1.0,
+          "lo": 1.0,
+          "hi": 1.0,
+          "std": 0.0,
+          "n_valid": 1000
+        },
+        "f1": {
+          "point": 0.7272727272727273,
+          "lo": 0.2857142857142857,
+          "hi": 1.0,
+          "std": 0.17794002959999666,
+          "n_valid": 1000
+        },
+        "balanced_accuracy": {
+          "point": 0.7857142857142857,
+          "lo": 0.5833333333333334,
+          "hi": 1.0,
+          "std": 0.09979505602753323,
+          "n_valid": 1000
+        },
+        "mcc": {
+          "point": 0.6446583712203042,
+          "lo": 0.32732683535398854,
+          "hi": 1.0,
+          "std": 0.17145230861004357,
+          "n_valid": 1000
+        }
+      }
+    },
+    "amino_acids": {
+      "features": [
+        "L-Serine",
+        "L-Proline",
+        "L-Valine",
+        "L-Threonine",
+        "L-Isoleucine",
+        "L-Leucine",
+        "L-Aspartic Acid",
+        "L-Asparagine",
+        "L-Glutamine",
+        "L-Lysine",
+        "L-Glutamate",
+        "L-Methionine",
+        "L-Histidine",
+        "L-Phenylalanine",
+        "L-Arginine",
+        "L-Tyrosine",
+        "L-Tryptophan"
+      ],
+      "best_model": "SVM (RBF)",
+      "cv": {
+        "Logistic Regression": {
+          "cv_auc_mean": 0.888888888888889,
+          "cv_auc_std": 0.0752772652709081,
+          "best_params": {
+            "C": 1,
+            "penalty": "l2"
+          }
+        },
+        "SVM (RBF)": {
+          "cv_auc_mean": 0.9077777777777778,
+          "cv_auc_std": 0.08131633094903107,
+          "best_params": {
+            "C": 100,
+            "gamma": 0.001
+          }
+        },
+        "KNN": {
+          "cv_auc_mean": 0.7988888888888889,
+          "cv_auc_std": 0.11300606342303214,
+          "best_params": {
+            "n_neighbors": 15,
+            "weights": "distance"
+          }
+        },
+        "Naive Bayes": {
+          "cv_auc_mean": 0.7444444444444444,
+          "cv_auc_std": 0.13310165056345488,
+          "best_params": {
+            "var_smoothing": 1e-09
+          }
+        }
+      },
+      "test": {
+        "roc_auc": {
+          "point": 0.6785714285714286,
+          "lo": 0.36363636363636365,
+          "hi": 0.9400000000000001,
+          "std": 0.14675465845682528,
+          "n_valid": 1000
+        },
+        "pr_auc": {
+          "point": 0.7257326007326006,
+          "lo": 0.3956517857142857,
+          "hi": 0.9476193251193251,
+          "std": 0.14029219887288258,
+          "n_valid": 1000
+        },
+        "brier": {
+          "point": 0.24272805331253222,
+          "lo": 0.1302393255585972,
+          "hi": 0.373179621773121,
+          "std": 0.0650745106718829,
+          "n_valid": 1000
+        },
+        "precision": {
+          "point": 0.6,
+          "lo": 0.0,
+          "hi": 1.0,
+          "std": 0.2359267692478895,
+          "n_valid": 1000
+        },
+        "recall": {
+          "point": 0.42857142857142855,
+          "lo": 0.0,
+          "hi": 0.8,
+          "std": 0.19729249643855631,
+          "n_valid": 1000
+        },
+        "specificity": {
+          "point": 0.75,
+          "lo": 0.375,
+          "hi": 1.0,
+          "std": 0.15960166190040778,
+          "n_valid": 1000
+        },
+        "f1": {
+          "point": 0.5,
+          "lo": 0.0,
+          "hi": 0.7692307692307693,
+          "std": 0.18389131107977247,
+          "n_valid": 1000
+        },
+        "balanced_accuracy": {
+          "point": 0.5892857142857143,
+          "lo": 0.33035714285714285,
+          "hi": 0.8055555555555556,
+          "std": 0.12447430066941079,
+          "n_valid": 1000
+        },
+        "mcc": {
+          "point": 0.18898223650461363,
+          "lo": -0.35380546491935094,
+          "hi": 0.6071428571428571,
+          "std": 0.2580426372019662,
+          "n_valid": 1000
+        }
+      }
+    },
+    "combined": {
+      "features": [
+        "Age",
+        "Height (m)",
+        "Weight (kg)",
+        "BMI",
+        "Serum testosterone (ng/ml)",
+        "L-Serine",
+        "L-Proline",
+        "L-Valine",
+        "L-Threonine",
+        "L-Isoleucine",
+        "L-Leucine",
+        "L-Aspartic Acid",
+        "L-Asparagine",
+        "L-Glutamine",
+        "L-Lysine",
+        "L-Glutamate",
+        "L-Methionine",
+        "L-Histidine",
+        "L-Phenylalanine",
+        "L-Arginine",
+        "L-Tyrosine",
+        "L-Tryptophan"
+      ],
+      "best_model": "Logistic Regression",
+      "cv": {
+        "Logistic Regression": {
+          "cv_auc_mean": 0.8744444444444444,
+          "cv_auc_std": 0.09529680729951806,
+          "best_params": {
+            "C": 1,
+            "penalty": "l2"
+          }
+        },
+        "SVM (RBF)": {
+          "cv_auc_mean": 0.8488888888888889,
+          "cv_auc_std": 0.08905539959783942,
+          "best_params": {
+            "C": 100,
+            "gamma": 0.001
+          }
+        },
+        "KNN": {
+          "cv_auc_mean": 0.7866666666666666,
+          "cv_auc_std": 0.1455873586969201,
+          "best_params": {
+            "n_neighbors": 15,
+            "weights": "uniform"
+          }
+        },
+        "Naive Bayes": {
+          "cv_auc_mean": 0.7822222222222222,
+          "cv_auc_std": 0.1363727643783667,
+          "best_params": {
+            "var_smoothing": 1e-09
+          }
+        }
+      },
+      "test": {
+        "roc_auc": {
+          "point": 0.7857142857142857,
+          "lo": 0.5,
+          "hi": 1.0,
+          "std": 0.12486511628920552,
+          "n_valid": 1000
+        },
+        "pr_auc": {
+          "point": 0.7952380952380953,
+          "lo": 0.47687500000000005,
+          "hi": 1.0,
+          "std": 0.13487166908598214,
+          "n_valid": 1000
+        },
+        "brier": {
+          "point": 0.21286105986674234,
+          "lo": 0.08616884377849819,
+          "hi": 0.3570979019415173,
+          "std": 0.07099001575918576,
+          "n_valid": 1000
+        },
+        "precision": {
+          "point": 0.75,
+          "lo": 0.0,
+          "hi": 1.0,
+          "std": 0.2515947469781098,
+          "n_valid": 1000
+        },
+        "recall": {
+          "point": 0.42857142857142855,
+          "lo": 0.0,
+          "hi": 0.8333333333333334,
+          "std": 0.20146264162293234,
+          "n_valid": 1000
+        },
+        "specificity": {
+          "point": 0.875,
+          "lo": 0.6,
+          "hi": 1.0,
+          "std": 0.11778698879182398,
+          "n_valid": 1000
+        },
+        "f1": {
+          "point": 0.5454545454545454,
+          "lo": 0.0,
+          "hi": 0.8571428571428571,
+          "std": 0.19925594141583905,
+          "n_valid": 1000
+        },
+        "balanced_accuracy": {
+          "point": 0.6517857142857143,
+          "lo": 0.42301136363636366,
+          "hi": 0.8660714285714286,
+          "std": 0.11506630760104461,
+          "n_valid": 1000
+        },
+        "mcc": {
+          "point": 0.3424747597107866,
+          "lo": -0.19611613513818402,
+          "hi": 0.7389834458795574,
+          "std": 0.24214836080171692,
+          "n_valid": 1000
+        }
+      }
+    }
+  }
+}

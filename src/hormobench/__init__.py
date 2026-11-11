@@ -33,6 +33,12 @@ SHAP_CSV        = RESULTS / "shap_importance.csv"
 MODEL_JOBLIB    = RESULTS_MOD / "best_model.joblib"
 PREPROC_JOBLIB  = RESULTS_MOD / "preprocessor.joblib"
 
+# Metabolomics cohort track (separate cohort, separate split, separate results)
+META_RAW_DIR    = DATA_RAW / "metabolomics"
+META_CLEAN_CSV  = DATA_PROCESSED / "pcos_metabolomics_clean.csv"
+META_SPLITS     = DATA_SPLITS / "metabolomics_splits.json"
+META_RESULTS    = RESULTS / "metabolomics"
+
 # Reproducibility constants
 SEED               = 42
 N_BOOTSTRAP        = 1000
