@@ -61,23 +61,7 @@ challenge it without rebuilding the foundations.
 
 ## Pipeline at a Glance
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TB
-    subgraph prep ["1. Prepare"]
-        direction LR
-        A["Raw xlsx (Kerala)"] --> B["Clean"] --> C["Split 70/15/15"]
-    end
-    subgraph model ["2. Model"]
-        direction LR
-        D["Train 4 models, 5-fold CV"] --> E["Validate, threshold 0.21"] --> F["Test, single pass"]
-    end
-    subgraph report ["3. Report"]
-        direction LR
-        G["Bootstrap, DeLong, Platt"] --> H["SHAP explain"] --> I["Tables and figures"]
-    end
-    prep --> model --> report
-```
+![HormoBench-PCOS pipeline: prepare, model, report](docs/figures/pipeline.png)
 
 Full stage specification: [`docs/BENCHMARK_SPEC.md`](docs/BENCHMARK_SPEC.md).
 
@@ -85,29 +69,7 @@ Full stage specification: [`docs/BENCHMARK_SPEC.md`](docs/BENCHMARK_SPEC.md).
 
 ## Anti-Leakage Data Flow
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TB
-    subgraph train ["TRAIN 70%"]
-        direction LR
-        T1["fit preprocessor"]
-        T2["fit models via CV"]
-    end
-    subgraph val ["VALIDATION 15%"]
-        direction LR
-        V1["choose winner"]
-        V2["tune threshold 0.21"]
-        V3["fit Platt scaling"]
-    end
-    subgraph test ["TEST 15%, sealed"]
-        direction LR
-        E1["single-pass evaluation"]
-        E2["bootstrap 95% CI"]
-        E3["DeLong pairwise"]
-    end
-    train -- "transform only" --> val
-    val -- "transform only" --> test
-```
+![Anti-leakage data flow: train fits, validation and test are transform-only](docs/figures/anti_leakage.png)
 
 Six anti-leakage invariants documented in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) § 1.
 
