@@ -66,15 +66,15 @@ challenge it without rebuilding the foundations.
 flowchart TB
     subgraph prep ["1. Prepare"]
         direction LR
-        A["Raw xlsx<br/>Kerala cohort"] --> B["Clean<br/>deterministic"] --> C["Split 70/15/15<br/>stratified, seed 42"]
+        A["Raw xlsx (Kerala)"] --> B["Clean"] --> C["Split 70/15/15"]
     end
     subgraph model ["2. Model"]
         direction LR
-        D["Train<br/>4 models, 5-fold CV"] --> E["Validate<br/>threshold 0.21"] --> F["Test<br/>single pass"]
+        D["Train 4 models, 5-fold CV"] --> E["Validate, threshold 0.21"] --> F["Test, single pass"]
     end
     subgraph report ["3. Report"]
         direction LR
-        G["Rigor<br/>bootstrap, DeLong, Platt"] --> H["Explain<br/>SHAP, literature"] --> I["Publish<br/>tables, figures"]
+        G["Bootstrap, DeLong, Platt"] --> H["SHAP explain"] --> I["Tables and figures"]
     end
     prep --> model --> report
 ```
@@ -89,13 +89,21 @@ Full stage specification: [`docs/BENCHMARK_SPEC.md`](docs/BENCHMARK_SPEC.md).
 %%{init: {"flowchart": {"htmlLabels": false}}}%%
 flowchart TB
     subgraph train ["TRAIN 70%"]
-        T["fit preprocessor<br/>fit models via CV"]
+        direction LR
+        T1["fit preprocessor"]
+        T2["fit models via CV"]
     end
     subgraph val ["VALIDATION 15%"]
-        V["choose winner<br/>tune threshold 0.21<br/>fit Platt scaling"]
+        direction LR
+        V1["choose winner"]
+        V2["tune threshold 0.21"]
+        V3["fit Platt scaling"]
     end
     subgraph test ["TEST 15%, sealed"]
-        E["single-pass evaluation<br/>bootstrap 95% CI<br/>DeLong pairwise"]
+        direction LR
+        E1["single-pass evaluation"]
+        E2["bootstrap 95% CI"]
+        E3["DeLong pairwise"]
     end
     train -- "transform only" --> val
     val -- "transform only" --> test
